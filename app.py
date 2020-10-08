@@ -12,6 +12,7 @@ mysql = MySQL(app)
 
 @app.route('/add_users' , methods=['POST'])
 def add_users():
+   
    details = request.form
    firstname = details['firstname']
    lastname = details['lastname']
@@ -20,4 +21,6 @@ def add_users():
    cur.execute("INSERT INTO users(firstname,lastname,email) VALUES (%s,%s,%s)",(firstname,lastname,email))
    mysql.connection.commit()
    cur.close()
+
    return 'Kullanıcı Eklendi'
+
