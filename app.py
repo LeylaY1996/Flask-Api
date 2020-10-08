@@ -1,5 +1,7 @@
 from flask import Flask, request
 from flask_mysqldb import MySQL
+from flask import jsonify # <- `jsonify` instead of `json`
+
 
 app = Flask(__name__)
 
@@ -11,8 +13,8 @@ app.config['MYSQL_DB'] = 'python_api'
 mysql = MySQL(app)
 
 @app.route('/add_users' , methods=['POST'])
-def add_users():
-   
+def add_user():
+
    details = request.form
    firstname = details['firstname']
    lastname = details['lastname']
@@ -24,3 +26,10 @@ def add_users():
 
    return 'Kullanıcı Eklendi'
 
+@app.route('/get_users', methods=['GET'])
+def get_users():
+   cur = mysql.connection.cursor()
+   cur.execute("SELECT * FROM users")
+   rows = cur.fetchall()
+   resp = jsonify(rows)
+   return resp
