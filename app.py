@@ -43,15 +43,25 @@ def get_user(id):
     rows = jsonify(cur.fetchone())
     return rows
 
-@app.route('/update_user', methods=['POST'])
-def update_user():
-   
+@app.route('/delete_user/<id>',methods=['DELETE'])
+def delete_user(id):
+   cur = mysql.connection.cursor()
+   cur.execute("DELETE FROM users WHERE id=%s", (id))
+   mysql.connection.commit()
+   cur.close()
+
+   return 'Kullanıcı Silindi'
+
+@app.route('/update_user/<id>',methods=['POST'])
+def update_user(id):
    details = request.form
-   _id = details['id']
    firstname = details['firstname']
    lastname = details['lastname']
    email = details['email']
    cur = mysql.connection.cursor()
-   cur.execute("UPDATE users(firstname,lastname,email) VALUES (%s,%s,%s)",(firstname,lastname,email))
+   cur.execute("UPDATE users SET firstname=%s,lastname=%s,email=%s WHERE id=%s",(firstname,lastname,email,id))
+
    mysql.connection.commit()
    cur.close()
+
+   return 'Kullanıcı Güncellendi'
