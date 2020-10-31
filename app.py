@@ -5,9 +5,9 @@ from flask import jsonify,json # <- `jsonify` instead of `json`
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'python_api'
 
 mysql = MySQL(app)
@@ -15,7 +15,7 @@ mysql = MySQL(app)
 @app.route('/add_user' , methods=['POST'])
 
 def add_user():
-
+   
    details = request.form
    firstname = details['firstname']
    lastname = details['lastname']
@@ -65,3 +65,34 @@ def update_user(id):
    cur.close()
 
    return 'Kullanıcı Güncellendi'
+
+
+@app.route('/add_car' , methods=['POST'])
+
+def add_car():
+   
+   test = request.form
+   model = test['model']
+   cur = mysql.connection.cursor()
+   cur.execute("INSERT INTO cars(model) VALUES %s",model)
+   mysql.connection.commit()
+   cur.close()
+
+   return 'Araba Eklendi'
+
+
+@app.route('/get_cars', methods=['GET'])
+
+def get_cars():
+
+   cur = mysql.connection.cursor()
+   cur.execute("SELECT * FROM cars")
+   rows = jsonify(cur.fetchall())
+   return rows
+
+@app.route('/get_car/<id>')
+def get_car(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM cars WHERE id=%s", id)
+    rows = jsonify(cur.fetchone())
+    return rows
